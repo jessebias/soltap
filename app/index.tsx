@@ -4,6 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useRef, useState } from 'react';
 import { Dimensions, Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
+import Intro from '../components/Intro';
 
 type GameState = 'idle' | 'waiting' | 'go' | 'fail' | 'result';
 
@@ -19,9 +20,10 @@ const NEON_RED = '#FF3B30'; // Sleek red for fail state
 const TITLE_SIZE = width * 0.14;
 
 export default function ReactionGame() {
+    const [showIntro, setShowIntro] = useState(true);
     const [gameState, setGameState] = useState<GameState>('idle');
     const [resultMs, setResultMs] = useState<number>(0);
-    const [timerId, setTimerId] = useState<NodeJS.Timeout | null>(null);
+    const [timerId, setTimerId] = useState<NodeJS.Timeout | number | null>(null);
     const goTimeRef = useRef<number>(0);
 
     const getGradientColors = (): [string, string, ...string[]] => {
@@ -150,6 +152,8 @@ export default function ReactionGame() {
                     </View>
                 )}
             </LinearGradient>
+
+            {showIntro && <Intro onFinish={() => setShowIntro(false)} />}
         </Pressable>
     );
 }
