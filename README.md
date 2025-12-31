@@ -9,4 +9,3 @@ The core experience is intentionally simple:
 - Tap as fast as possible
 - See your reaction time in milliseconds
 
-The app focuses on speed, polish, and trust.

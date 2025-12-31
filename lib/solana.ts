@@ -14,7 +14,6 @@ const NETWORK = clusterApiUrl('mainnet-beta');
 const CONNECTION = new Connection(NETWORK);
 
 // The "House" wallet that collects transaction fees
-// The "House" wallet that collects transaction fees
 const HOUSE_ADDRESS = process.env.EXPO_PUBLIC_HOUSE_ADDRESS!;
 
 if (!HOUSE_ADDRESS) {
