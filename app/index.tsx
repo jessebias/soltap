@@ -193,6 +193,9 @@ export default function ReactionGame() {
                         >
                             <Text style={styles.submitBtnText}>SUBMIT SCORE</Text>
                         </TouchableOpacity>
+                        <Text style={styles.disclaimerText}>
+                            Submitting a score requires a small on-chain verification to keep the leaderboard clean.
+                        </Text>
                     </View>
                 )}
             </SafeAreaView>
@@ -298,5 +301,14 @@ const styles = StyleSheet.create({
         fontWeight: '900',
         fontSize: 16,
         letterSpacing: 1,
+    },
+    disclaimerText: {
+        color: 'white',
+        opacity: 0.5,
+        fontSize: 11,
+        textAlign: 'center',
+        marginTop: 12,
+        maxWidth: 280,
+        fontWeight: '500',
     },
 });

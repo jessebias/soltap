@@ -1,37 +1,50 @@
-# Reaction Test Mobile App ⚡️
+# Welcome to your Expo app 👋
 
-A sleek, minimal reaction speed game built with **React Native** and **Expo**, featuring a "Solana-inspired" aesthetic (Dark mode, neon green, and purple).
+This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
-## 🎮 How to Play
-1. **Tap to Start**: The screen goes dark.
-2. **Wait for Green**: Hold steady while the screen is purple/dark.
-3. **Tap Fast!**: As soon as the screen turns **Green**, tap as fast as you can.
-4. **See Results**: Get your reaction time in milliseconds and find out if you have "Diamond Hands" or "Paper Hands".
+## Get started
 
-## 🚀 Getting Started
+1. Install dependencies
 
-### Prerequisites
-- Node.js installed.
-- Expo Go app on your phone (optional) or a Simulator/Emulator.
+   ```bash
+   npm install
+   ```
 
-### Installation
+2. Start the app
+
+   ```bash
+   npx expo start
+   ```
+
+In the output, you'll find options to open the app in a
+
+- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
+- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
+- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
+- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+
+You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+
+## Get a fresh project
+
+When you're ready, run:
+
 ```bash
-npm install
+npm run reset-project
 ```
 
-### Running the App
-- **iOS Simulator**: `npm run ios`
-- **Android Emulator**: `npm run android`
-- **General Start**: `npm start`
+This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
 
-## 🛠 Tech Stack
-- **Framework**: React Native (via Expo)
-- **Routing**: Expo Router
-- **Animations**: React Native Reanimated
-- **Haptics**: Expo Haptics
+## Learn more
 
-## 🎨 Aesthetic
-Modeled after the Solana brand identity:
-- **Primary**: Solana Green (`#14F195`)
-- **Secondary**: Solana Purple (`#9945FF`)
-- **Background**: Deep Dark (`#000000` / `#101012`)
+To learn more about developing your project with Expo, look at the following resources:
+
+- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
+- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+
+## Join the community
+
+Join our community of developers creating universal apps.
+
+- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
+- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
