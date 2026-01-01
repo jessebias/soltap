@@ -237,6 +237,13 @@ export default function SpeedRunGame() {
                         <Text style={styles.disclaimerText}>
                             Submitting a score requires a small on-chain verification.
                         </Text>
+
+                        <TouchableOpacity
+                            style={styles.menuBtn}
+                            onPress={() => router.back()}
+                        >
+                            <Text style={styles.menuBtnText}>MAIN MENU</Text>
+                        </TouchableOpacity>
                     </View>
                 )}
             </SafeAreaView>
@@ -430,5 +437,16 @@ const styles = StyleSheet.create({
         marginTop: 12,
         maxWidth: 280,
         fontWeight: '500',
+    },
+    menuBtn: {
+        marginTop: 20,
+        padding: 10,
+    },
+    menuBtnText: {
+        color: 'white',
+        opacity: 0.6,
+        fontSize: 14,
+        fontWeight: '600',
+        letterSpacing: 2,
     },
 });

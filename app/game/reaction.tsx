@@ -244,6 +244,13 @@ export default function ReactionGame() {
                         <Text style={styles.disclaimerText}>
                             Submitting a score requires a small on-chain verification to keep the leaderboard clean.
                         </Text>
+
+                        <TouchableOpacity
+                            style={styles.menuBtn}
+                            onPress={() => router.back()}
+                        >
+                            <Text style={styles.menuBtnText}>MAIN MENU</Text>
+                        </TouchableOpacity>
                     </View>
                 )}
             </SafeAreaView>
@@ -383,5 +390,16 @@ const styles = StyleSheet.create({
         padding: 8,
         backgroundColor: 'rgba(0,0,0,0.3)',
         borderRadius: 20,
+    },
+    menuBtn: {
+        marginTop: 20,
+        padding: 10,
+    },
+    menuBtnText: {
+        color: 'white',
+        opacity: 0.6,
+        fontSize: 14,
+        fontWeight: '600',
+        letterSpacing: 2,
     },
 });
