@@ -5,15 +5,17 @@ export interface Score {
     time_ms: number;
     wallet_address?: string;
     created_at: string;
+    game_mode?: string;
 }
 
 /**
- * Fetches the top 50 scores from Supabase.
+ * Fetches the top 50 scores from Supabase for a specific game mode.
  */
-export const fetchLeaderboard = async (): Promise<Score[]> => {
+export const fetchLeaderboard = async (gameMode: string = 'reaction_test'): Promise<Score[]> => {
     const { data, error } = await supabase
         .from('scores')
         .select('*')
+        .eq('game_mode', gameMode)
         .order('time_ms', { ascending: true })
         .limit(50);
 
@@ -31,7 +33,8 @@ export const fetchLeaderboard = async (): Promise<Score[]> => {
 export const submitScore = async (
     timeMs: number,
     walletAddress: string,
-    txSignature: string
+    txSignature: string,
+    gameMode: string = 'reaction_test'
 ) => {
     const { data, error } = await supabase
         .from('scores')
@@ -40,6 +43,7 @@ export const submitScore = async (
                 time_ms: timeMs,
                 wallet_address: walletAddress,
                 tx_signature: txSignature,
+                game_mode: gameMode,
             },
         ])
         .select();

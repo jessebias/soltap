@@ -1,227 +1,113 @@
-import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import React, { useRef, useState } from 'react';
-import { Dimensions, Pressable, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import Animated, { FadeIn } from 'react-native-reanimated';
+import React, { useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Intro from '../components/Intro';
 import Leaderboard from '../components/Leaderboard';
-import { submitScore } from '../lib/leaderboard';
-import { requestPayment } from '../lib/solana';
 
-type GameState = 'idle' | 'waiting' | 'go' | 'fail' | 'result';
-
-const { width } = Dimensions.get('window');
-
-// Solana Brand Colors
-const SOLANA_GREEN = '#14F195';
-const SOLANA_PURPLE = '#9945FF';
 const DARK_BG = '#000000';
 const DEEP_BG = '#101012';
-const NEON_RED = '#FF3B30'; // Sleek red for fail state
+const SOLANA_GREEN = '#14F195';
+const SOLANA_PURPLE = '#9945FF';
 
-const TITLE_SIZE = width * 0.14;
-
-export default function ReactionGame() {
+export default function GameSelection() {
+    const router = useRouter();
     const [showIntro, setShowIntro] = useState(true);
     const [showLeaderboard, setShowLeaderboard] = useState(false);
-    const [gameState, setGameState] = useState<GameState>('idle');
-    const [resultMs, setResultMs] = useState<number>(0);
-    const [timerId, setTimerId] = useState<NodeJS.Timeout | number | null>(null);
-    const goTimeRef = useRef<number>(0);
-
-    const getGradientColors = (): [string, string, ...string[]] => {
-        switch (gameState) {
-            case 'idle':
-                // Sleek dark gradient
-                return [DEEP_BG, DARK_BG];
-            case 'waiting':
-                // Deep purple hue indicating anticipation
-                return ['#1e0a33', '#000000'];
-            case 'go':
-                // Flashy Solana Green
-                return [SOLANA_GREEN, '#14F195'];
-            case 'fail':
-                // Error state
-                return [NEON_RED, '#8a0000'];
-            case 'result':
-                // The Signature Solana Gradient
-                return [SOLANA_PURPLE, SOLANA_GREEN];
-            default:
-                return [DEEP_BG, DARK_BG];
-        }
-    };
-
-    const getTitle = () => {
-        switch (gameState) {
-            case 'idle': return 'START';
-            case 'waiting': return 'WAIT';
-            case 'go': return 'TAP!';
-            case 'fail': return 'TOO SOON';
-            case 'result': return `${resultMs}ms`;
-        }
-    };
-
-    const getSubtitle = () => {
-        switch (gameState) {
-            case 'idle': return 'REACTION TEST';
-            case 'waiting': return 'HOLD STEADY...';
-            case 'go': return '';
-            case 'fail': return 'YOU FUMBLED';
-            case 'result': return getResultLabel(resultMs);
-        }
-    };
-
-    const getResultLabel = (ms: number) => {
-        if (ms < 180) return 'GOD MODE';
-        if (ms < 250) return 'DIAMOND HANDS';
-        if (ms < 350) return 'AVERAGE';
-        return 'PAPER HANDS';
-    };
-
-    // Text color logic: Black on Green (Go), White on others
-    const getTextColor = () => (gameState === 'go' ? 'black' : 'white');
-
-    const startGame = () => {
-        setGameState('waiting');
-        const delay = 2000 + Math.random() * 4000;
-        const id = setTimeout(() => {
-            handleGo();
-        }, delay);
-        setTimerId(id);
-    };
-
-    const handleGo = () => {
-        setGameState('go');
-        goTimeRef.current = performance.now();
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-    };
-
-    const handleTooSoon = () => {
-        if (timerId) clearTimeout(timerId);
-        setGameState('fail');
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-    };
-
-    const handleFinish = () => {
-        const ms = Math.round(performance.now() - goTimeRef.current);
-        setResultMs(ms);
-        setGameState('result');
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    };
-
-    const handlePress = () => {
-        if (gameState === 'idle') {
-            startGame();
-        } else if (gameState === 'waiting') {
-            handleTooSoon();
-        } else if (gameState === 'go') {
-            handleFinish();
-        } else {
-            setGameState('idle');
-        }
-    };
-
-    const [paymentProcessing, setPaymentProcessing] = useState(false);
-
-    const handleSubmitScore = async () => {
-        if (paymentProcessing) return;
-        setPaymentProcessing(true);
-        try {
-            // Request Payment & Verify on-chain
-            const result = await requestPayment();
-
-            if (result.verified) {
-                // Submit proven score to Leaderboard
-                await submitScore(resultMs, result.wallet, result.signature);
-                setShowLeaderboard(true);
-            }
-        } catch (error: any) {
-            console.error(error);
-            // Inform user of failure
-            alert("Payment failed or timed out. Please try again.");
-        } finally {
-            setPaymentProcessing(false);
-        }
-    };
 
     return (
         <View style={styles.container}>
-            <StatusBar style={gameState === 'go' ? 'dark' : 'light'} />
-
-            {/* Main Game Touch Area */}
-            <Pressable style={StyleSheet.absoluteFill} onPress={handlePress}>
-                <LinearGradient
-                    colors={getGradientColors()}
-                    style={styles.gradient}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                >
-                    <View style={styles.center}>
-                        <Text style={[styles.h1, { color: getTextColor() }]}>{getTitle()}</Text>
-                        <Text style={[styles.p, { color: getTextColor() }]}>{getSubtitle()}</Text>
-
-                        {gameState === 'result' && (
-                            <View style={{ alignItems: 'center' }}>
-                                <Animated.Text
-                                    entering={FadeIn.delay(200).duration(600)}
-                                    style={styles.restartText}
-                                >
-                                    TAP TO RETRY
-                                </Animated.Text>
-
-                                {/* Submit Score Button - Needs to stop propagation if pressing specific button */}
-                            </View>
-                        )}
-                    </View>
-
-                    {gameState === 'idle' && (
-                        <View style={styles.brandingContainer}>
-                            <LinearGradient
-                                colors={[SOLANA_PURPLE, SOLANA_GREEN]}
-                                start={{ x: 0, y: 0 }}
-                                end={{ x: 1, y: 0 }}
-                                style={styles.brandingBar}
-                            />
-                        </View>
-                    )}
-                </LinearGradient>
-            </Pressable>
-
-            {/* UI Overlays (Buttons) */}
-            <SafeAreaView pointerEvents="box-none" style={styles.overlayContainer}>
-                {gameState === 'idle' && (
+            <StatusBar style="light" />
+            <LinearGradient
+                colors={[DEEP_BG, DARK_BG]}
+                style={styles.gradient}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+            >
+                <View style={styles.header}>
                     <TouchableOpacity
                         style={styles.leaderboardBtn}
                         onPress={() => setShowLeaderboard(true)}
                     >
                         <Text style={styles.leaderboardBtnText}>🏆 LEADERBOARD</Text>
                     </TouchableOpacity>
-                )}
+                </View>
 
-                {gameState === 'result' && (
-                    <View style={styles.bottomActions} pointerEvents="box-none">
+                <View style={styles.content}>
+                    <Text style={styles.title}>SOLTAP</Text>
+                    <Text style={styles.subtitle}>SELECT MODE</Text>
+
+                    <View style={styles.menu}>
                         <TouchableOpacity
-                            style={[styles.submitBtn, paymentProcessing && { opacity: 0.5 }]}
-                            onPress={handleSubmitScore}
-                            disabled={paymentProcessing}
+                            style={styles.card}
+                            onPress={() => router.push('/game/reaction')}
+                            activeOpacity={0.8}
                         >
-                            <Text style={styles.submitBtnText}>
-                                {paymentProcessing ? "VERIFYING..." : "SUBMIT SCORE"}
-                            </Text>
+                            <LinearGradient
+                                colors={['rgba(20, 241, 149, 0.15)', 'rgba(20, 241, 149, 0.05)']}
+                                style={styles.cardGradient}
+                                start={{ x: 0, y: 0 }}
+                                end={{ x: 1, y: 1 }}
+                            >
+                                <View style={styles.cardHeader}>
+                                    <Text style={[styles.cardIcon, { color: SOLANA_GREEN }]}>⚡️</Text>
+                                    <View>
+                                        <Text style={[styles.cardTitle, { color: SOLANA_GREEN }]}>REACTION TEST</Text>
+                                        <Text style={styles.cardDesc}>Single tap reflex challenge</Text>
+                                    </View>
+                                </View>
+                            </LinearGradient>
                         </TouchableOpacity>
-                        <Text style={styles.disclaimerText}>
-                            Submitting a score requires a small on-chain verification to keep the leaderboard clean.
-                        </Text>
+
+                        <TouchableOpacity
+                            style={styles.card}
+                            onPress={() => router.push('/game/multi-zone')}
+                            activeOpacity={0.8}
+                        >
+                            <LinearGradient
+                                colors={['rgba(153, 69, 255, 0.15)', 'rgba(153, 69, 255, 0.05)']}
+                                style={styles.cardGradient}
+                                start={{ x: 0, y: 0 }}
+                                end={{ x: 1, y: 1 }}
+                            >
+                                <View style={styles.cardHeader}>
+                                    <Text style={[styles.cardIcon, { color: SOLANA_PURPLE }]}>💠</Text>
+                                    <View>
+                                        <Text style={[styles.cardTitle, { color: SOLANA_PURPLE }]}>MULTI-ZONE</Text>
+                                        <Text style={styles.cardDesc}>Grid reflex challenge</Text>
+                                    </View>
+                                </View>
+                            </LinearGradient>
+                        </TouchableOpacity>
                     </View>
-                )}
-            </SafeAreaView>
+                </View>
+
+                {/* Branding Footer */}
+                <View style={styles.brandingContainer}>
+                    <LinearGradient
+                        colors={[SOLANA_PURPLE, SOLANA_GREEN]}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 0 }}
+                        style={styles.brandingBar}
+                    />
+                </View>
+            </LinearGradient>
 
             {showIntro && <Intro onFinish={() => setShowIntro(false)} />}
 
             <Leaderboard
                 visible={showLeaderboard}
                 onClose={() => setShowLeaderboard(false)}
+                // Default to reaction test or maybe add a "General" mode later?
+                // For now, let's just show reaction_test or maybe make it selectable inside?
+                // Or maybe we hide the specific leaderboard until a game is selected?
+                // The user asked for "Leaderboard only shows up when in reaction test game" as a BUG.
+                // So I will add it here, defaulting to 'reaction_test' is fine for now, 
+                // or we could update Leaderboard component to have tabs. 
+                // Let's stick to 'reaction_test' as default or pass undefined if we want to show all (needs backend support).
+                // Actually, let's just default to 'reaction_test' for now to solve the "missing" issue.
+                gameMode="reaction_test"
             />
         </View>
     );
@@ -234,61 +120,17 @@ const styles = StyleSheet.create({
     },
     gradient: {
         flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
     },
-    center: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 20,
-        width: '100%',
-    },
-    h1: {
-        fontSize: TITLE_SIZE,
-        fontWeight: '900',
-        letterSpacing: 1,
-        textAlign: 'center',
-        textTransform: 'uppercase',
-    },
-    p: {
-        fontSize: 16,
-        opacity: 0.8,
-        letterSpacing: 4,
-        marginTop: 16,
-        textAlign: 'center',
-        fontWeight: '700',
-        textTransform: 'uppercase',
-    },
-    restartText: {
-        fontSize: 16,
-        color: 'white',
-        marginTop: 40,
-        fontWeight: '700',
-        letterSpacing: 2,
-        opacity: 0.9,
-    },
-    brandingContainer: {
+    header: {
         position: 'absolute',
-        bottom: 50,
-        alignItems: 'center',
-    },
-    brandingBar: {
-        width: 60,
-        height: 4,
-        borderRadius: 2,
-    },
-    // Overlay styles
-    overlayContainer: {
-        ...StyleSheet.absoluteFillObject,
-        justifyContent: 'space-between',
-        padding: 20,
+        top: 60,
+        right: 20,
+        zIndex: 10,
     },
     leaderboardBtn: {
-        alignSelf: 'flex-end',
-        padding: 10,
+        padding: 8,
         backgroundColor: 'rgba(255, 255, 255, 0.1)',
         borderRadius: 20,
-        marginTop: 10,
     },
     leaderboardBtnText: {
         color: 'white',
@@ -296,36 +138,68 @@ const styles = StyleSheet.create({
         fontSize: 12,
         letterSpacing: 1,
     },
-    bottomActions: {
+    content: {
         flex: 1,
-        justifyContent: 'flex-end',
-        alignItems: 'center',
-        marginBottom: 80, // Space specifically for the button in result screen
+        justifyContent: 'center',
+        padding: 20,
     },
-    submitBtn: {
-        backgroundColor: 'white',
-        paddingVertical: 14,
-        paddingHorizontal: 32,
-        borderRadius: 30,
-        shadowColor: 'black',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.3,
-        shadowRadius: 4,
-        elevation: 5,
-    },
-    submitBtnText: {
-        color: 'black',
+    title: {
+        fontSize: 42,
         fontWeight: '900',
-        fontSize: 16,
-        letterSpacing: 1,
-    },
-    disclaimerText: {
         color: 'white',
-        opacity: 0.5,
-        fontSize: 11,
         textAlign: 'center',
-        marginTop: 12,
-        maxWidth: 280,
+        letterSpacing: 2,
+        marginBottom: 8,
+    },
+    subtitle: {
+        fontSize: 14,
+        color: '#888',
+        textAlign: 'center',
+        letterSpacing: 4,
+        marginBottom: 60,
+        textTransform: 'uppercase',
+    },
+    menu: {
+        gap: 20,
+    },
+    card: {
+        borderRadius: 16,
+        overflow: 'hidden',
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.1)',
+    },
+    cardGradient: {
+        padding: 24,
+    },
+    cardHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 16,
+    },
+    cardIcon: {
+        fontSize: 32,
+    },
+    cardTitle: {
+        fontSize: 18,
+        fontWeight: '900',
+        letterSpacing: 1,
+        marginBottom: 4,
+    },
+    cardDesc: {
+        color: '#AAA',
+        fontSize: 14,
         fontWeight: '500',
+    },
+    brandingContainer: {
+        position: 'absolute',
+        bottom: 50,
+        left: 0,
+        right: 0,
+        alignItems: 'center',
+    },
+    brandingBar: {
+        width: 60,
+        height: 4,
+        borderRadius: 2,
     },
 });

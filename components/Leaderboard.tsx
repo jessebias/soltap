@@ -32,9 +32,10 @@ interface Score {
 interface LeaderboardProps {
     visible: boolean;
     onClose: () => void;
+    gameMode?: string;
 }
 
-export default function Leaderboard({ visible, onClose }: LeaderboardProps) {
+export default function Leaderboard({ visible, onClose, gameMode = 'reaction_test' }: LeaderboardProps) {
     const [scores, setScores] = useState<Score[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -42,12 +43,12 @@ export default function Leaderboard({ visible, onClose }: LeaderboardProps) {
         if (visible) {
             loadLeaderboard();
         }
-    }, [visible]);
+    }, [visible, gameMode]);
 
     const loadLeaderboard = async () => {
         setLoading(true);
         try {
-            const data = await fetchLeaderboard();
+            const data = await fetchLeaderboard(gameMode);
             // Map API data to UI data
             const mappedScores: Score[] = data.map((item: ApiScore, index: number) => ({
                 id: item.id,
