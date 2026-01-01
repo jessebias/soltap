@@ -352,7 +352,7 @@ const styles = StyleSheet.create({
     },
     subTitle: {
         fontSize: 16,
-        color: '#FF9500', // Orange for Speed
+        color: ZONE_ACTIVE, // Solana Green
         opacity: 1,
         letterSpacing: 4,
         marginTop: 16,
