@@ -263,7 +263,7 @@ export default function MultiZoneGame() {
                             style={styles.menuBtn}
                             onPress={() => router.back()}
                         >
-                            <Text style={styles.menuBtnText}>MAIN MENU</Text>
+                            <Ionicons name="home-outline" size={24} color="white" />
                         </TouchableOpacity>
                     </View>
                 )}
@@ -451,12 +451,7 @@ const styles = StyleSheet.create({
     menuBtn: {
         marginTop: 20,
         padding: 10,
-    },
-    menuBtnText: {
-        color: 'white',
-        opacity: 0.6,
-        fontSize: 14,
-        fontWeight: '600',
-        letterSpacing: 2,
+        backgroundColor: 'rgba(255,255,255,0.08)',
+        borderRadius: 20,
     },
 });
