@@ -45,3 +45,7 @@ app-example
 /android
 /ios
 .idea/
+app/(tabs)/demo
+app/(tabs)/account
+components/demo
+components/account

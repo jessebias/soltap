@@ -10,8 +10,10 @@ import * as Linking from 'expo-linking';
 // Ensure globally available for web3.js
 global.Buffer = global.Buffer || Buffer;
 
-const NETWORK = clusterApiUrl('mainnet-beta');
-const CONNECTION = new Connection(NETWORK);
+// Use custom RPC if available, otherwise fallback to public (flakey)
+const NETWORK = process.env.EXPO_PUBLIC_RPC_URL || clusterApiUrl('mainnet-beta');
+console.log("⚡️ Solana Connection URL:", NETWORK.includes('helius') ? 'Using Helius RPC' : 'Using Public RPC');
+const CONNECTION = new Connection(NETWORK, 'confirmed');
 
 // The "House" wallet that collects transaction fees
 const HOUSE_ADDRESS = process.env.EXPO_PUBLIC_HOUSE_ADDRESS!;
@@ -63,7 +65,7 @@ export const requestPayment = async (): Promise<PaymentResult> => {
 
 const waitForConfirmation = async (reference: PublicKey): Promise<PaymentResult> => {
     let attempts = 0;
-    const maxAttempts = 60;
+    const maxAttempts = 120; // Increased to 2 minutes for public RPC delays
 
     while (attempts < maxAttempts) {
         attempts++;
@@ -97,7 +99,7 @@ const waitForConfirmation = async (reference: PublicKey): Promise<PaymentResult>
             console.warn("Polling error:", e);
         }
 
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 2000));
     }
 
     throw new Error("Payment timed out. Did you confirm the transaction?");

@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Score as ApiScore, fetchLeaderboard } from '../lib/leaderboard';
+import RewardsList from './RewardsList';
 
 // Colors matches app/index.tsx
 const SOLANA_GREEN = '#14F195';
@@ -69,8 +70,8 @@ export default function Leaderboard({ visible, onClose, gameMode = 'reaction_tes
                 date: new Date(item.created_at).toLocaleDateString(),
             }));
             setScores(mappedScores);
-        } catch (e) {
-            console.error(e);
+        } catch (e: any) {
+            console.error("Leaderboard Load Error:", e);
         } finally {
             setLoading(false);
         }
@@ -152,19 +153,30 @@ export default function Leaderboard({ visible, onClose, gameMode = 'reaction_tes
                             >
                                 <Text style={[styles.tabText, activeMode === 'multi_zone' && styles.activeTabText]}>ZONES</Text>
                             </TouchableOpacity>
+
+                            <TouchableOpacity
+                                style={[styles.tabButton, activeMode === 'rewards' && styles.activeTab]}
+                                onPress={() => setActiveMode('rewards')}
+                            >
+                                <Text style={[styles.tabText, activeMode === 'rewards' && styles.activeTabText]}>REWARDS</Text>
+                            </TouchableOpacity>
                         </View>
 
-                        {/* Column Headers */}
-                        <View style={styles.tableHeader}>
-                            <Text style={[styles.headerText, styles.rankCol]}>RANK</Text>
-                            <Text style={[styles.headerText, styles.walletCol]}>PLAYER</Text>
-                            <Text style={[styles.headerText, styles.timeCol]}>
-                                {activeMode === 'progressive_speed' ? 'STREAK' : 'TIME'}
-                            </Text>
-                        </View>
+                        {/* Column Headers (Hide in Rewards Mode) */}
+                        {activeMode !== 'rewards' && (
+                            <View style={styles.tableHeader}>
+                                <Text style={[styles.headerText, styles.rankCol]}>RANK</Text>
+                                <Text style={[styles.headerText, styles.walletCol]}>PLAYER</Text>
+                                <Text style={[styles.headerText, styles.timeCol]}>
+                                    {activeMode === 'progressive_speed' ? 'STREAK' : 'TIME'}
+                                </Text>
+                            </View>
+                        )}
 
                         {/* List */}
-                        {loading ? (
+                        {activeMode === 'rewards' ? (
+                            <RewardsList />
+                        ) : loading ? (
                             <View style={styles.loaderContainer}>
                                 <ActivityIndicator size="large" color={SOLANA_GREEN} />
                             </View>
