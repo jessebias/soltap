@@ -17,7 +17,7 @@
         "backgroundColor": "#000000"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.beeman.web3jsexpo"
+      "package": "com.soltap.game"
     },
     "web": {
       "bundler": "metro",
@@ -47,7 +47,9 @@
     },
     "extra": {
       "router": {},
-      "eas": {}
+      "eas": {
+        "projectId": "a41550f3-e06c-44b7-8ec9-d7431529704b"
+      }
     }
   }
 }
