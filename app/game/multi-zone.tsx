@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useRef, useState } from 'react';
@@ -18,6 +19,7 @@ const ZONES_COUNT = 4; // 2x2 Grid
 
 // Colors
 const DARK_BG = '#000000';
+const DEEP_BG = '#101012';
 const ZONE_INACTIVE = '#1A1A1D';
 const ZONE_ACTIVE = '#14F195'; // Solana Green
 const ZONE_ERROR = '#FF3B30';
@@ -193,8 +195,26 @@ export default function MultiZoneGame() {
         </View>
     );
 
+    const getGradientColors = (): [string, string, ...string[]] => {
+        switch (gameState) {
+            case 'intro':
+            case 'playing':
+                return [DEEP_BG, DARK_BG];
+            case 'result':
+                return [SOLANA_PURPLE, ZONE_ACTIVE];
+            default:
+                return [DEEP_BG, DARK_BG];
+        }
+    };
+
     return (
         <View style={styles.container}>
+            <LinearGradient
+                colors={getGradientColors()}
+                style={StyleSheet.absoluteFill}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+            />
             <StatusBar style="light" />
 
             <SafeAreaView style={styles.safeArea}>
@@ -233,8 +253,8 @@ export default function MultiZoneGame() {
                 {gameState === 'result' && (
                     <Pressable style={styles.fullScreenPressable} onPress={startGame}>
                         <View style={styles.centerContent}>
-                            <Text style={styles.resultLabel}>AVERAGE REACTION</Text>
                             <Text style={styles.resultScore}>{getAverageTime()}ms</Text>
+                            <Text style={styles.resultLabel}>AVERAGE REACTION</Text>
 
                             <Animated.Text style={[styles.restartText, animatedPulseStyle]}>TAP TO RETRY</Animated.Text>
                         </View>
@@ -390,16 +410,22 @@ const styles = StyleSheet.create({
         letterSpacing: 1,
     },
     resultLabel: {
-        color: '#888',
-        fontSize: 14,
-        letterSpacing: 2,
-        marginBottom: 10,
+        fontSize: 16,
+        opacity: 0.8,
+        letterSpacing: 4,
+        marginTop: 16,
+        textAlign: 'center',
+        fontWeight: '700',
+        textTransform: 'uppercase',
+        color: 'white',
     },
     resultScore: {
-        color: ZONE_ACTIVE,
-        fontSize: 64,
+        fontSize: width * 0.14,
         fontWeight: '900',
-        marginBottom: 50,
+        letterSpacing: 1,
+        textAlign: 'center',
+        textTransform: 'uppercase',
+        color: 'white',
     },
     restartText: {
         fontSize: 16,

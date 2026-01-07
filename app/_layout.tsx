@@ -10,6 +10,7 @@ import { StatusBar } from 'expo-status-bar'
 import { useCallback } from 'react'
 import { View } from 'react-native'
 import 'react-native-reanimated'
+import 'react-native-url-polyfill/auto'
 
 SplashScreen.preventAutoHideAsync()
 

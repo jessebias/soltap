@@ -12,7 +12,7 @@ global.Buffer = global.Buffer || Buffer;
 
 // Use custom RPC if available, otherwise fallback to public (flakey)
 const NETWORK = process.env.EXPO_PUBLIC_RPC_URL || clusterApiUrl('mainnet-beta');
-console.log("⚡️ Solana Connection URL:", NETWORK.includes('helius') ? 'Using Helius RPC' : 'Using Public RPC');
+console.log("⚡️ Solana Connection URL:", NETWORK); // Log the full URL
 const CONNECTION = new Connection(NETWORK, 'confirmed');
 
 // The "House" wallet that collects transaction fees
@@ -44,6 +44,7 @@ export const requestPayment = async (): Promise<PaymentResult> => {
         const supported = await Linking.canOpenURL(url.toString());
 
         if (!supported) {
+            console.error("No Solana wallet found");
             throw new Error("No Solana wallet found. Please install Phantom or Solflare.");
         }
 
@@ -57,8 +58,11 @@ export const requestPayment = async (): Promise<PaymentResult> => {
 
         return result;
 
-    } catch (e) {
+    } catch (e: any) {
         console.error("Payment Error:", e);
+        if (e.message === 'Network request failed') {
+            console.error("Network Error Details:", e.cause);
+        }
         throw e;
     }
 };

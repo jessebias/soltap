@@ -156,7 +156,10 @@ export default function ReactionGame() {
                 router.back(); // Optional: go back to menu? No, let them retry.
             }
         } catch (error: any) {
-            console.error(error);
+            console.error("Score Submission Error:", error);
+            if (error.cause) {
+                console.error("Error Cause:", error.cause);
+            }
             // Inform user of failure
             alert("Payment failed or timed out. Please try again.");
         } finally {
