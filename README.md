@@ -1,4 +1,4 @@
-# SolTap
+# S O L T A P
 
 **Boost your reaction speed and sharpen your reflexes with SolTap—the ultimate Web3-powered Reaction Time Test!**
 
