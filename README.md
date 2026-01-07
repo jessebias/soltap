@@ -11,6 +11,10 @@ Designed for simplicity, speed, and competition, SolTap puts your skills to the 
 
 Explore exciting game modes that challenge your reflexes and precision:
 
+| Reaction Test | Multi-Zone | Speed Run |
+| :---: | :---: | :---: |
+| <img src="screenshots/reaction-2.png" width="200" /> | <img src="screenshots/multi-zone.png" width="200" /> | <img src="screenshots/speed-run.png" width="200" /> |
+
 *   **⚡ Classic Reaction Test**: The OG challenge. Wait for the green light and tap instantly to prove your speed.
 *   **🎯 Multi-Zone**: Test your cognitive reflexes. Identify and tap the correct active zones as they light up across the grid.
 *   **🚀 Speed Run**: A high-speed survival mode. Hit the targets before they vanish—it gets faster with every successful tap. Can you keep up?
@@ -18,6 +22,8 @@ Explore exciting game modes that challenge your reflexes and precision:
 ## 🏆 Compete on Solana
 
 Prove your skills on the global **Solana Leaderboard**.
+
+<img src="screenshots/submit-score.png" alt="Score Submission" width="300" />
 
 *   **On-Chain Verification**: Securely sign your high scores on-chain. This "Proof of Reaction" prevents bots and ensures a cheat-free environment where only the fastest fingers survive.
 *   **Solana Pay Integration**: Deep links with Phantom/Solflare for seamless signing.
